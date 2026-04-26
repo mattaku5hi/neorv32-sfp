@@ -1,0 +1,124 @@
+# Build directories
+**/build/
+**/dist/
+**/out/
+**/obj-*/
+**/release/
+**/debug/
+**/build-release/
+**/build-debug/
+**/build-*/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+**/cmake-build-*/
+**/_CPack_Packages/
+
+# ccache
+**/.ccache/
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Python files
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+**/venv/
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# IDE files
+.vscode/
+.idea/
+.cache/
+*.tags
+compile_commands.json
+
+# Project-specific files
+*.settings
+*.png
+*.bin
+*.pbm
+*.rbit
+*.log
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.data
+
+# Package files
+*.deb
+*.rpm
+*.tar.gz
+*.zip
+
+# Core dumps
+core
+core.*
+
+# Coverage files
+*.gcov
+*.gcda
+*.gcno
+coverage/
+
+# Valgrind files
+*.memcheck
+*.helgrind
+*.drd
+*.cachegrind
+*.callgrind
+
+# Backup files
+*.bak
+*.backup
+*~ 
