@@ -32,7 +32,12 @@ void neo_app_run(uint32_t uart_baud)
         neo_puts("WARNING: TWI controller not available\n");
     }
 
-    neo_puts("\nNEO TWI shell ready.  Type 'help' or '?' for commands.\n");
+    if(!neorv32_gpio_available()) 
+    {
+        neo_puts("WARNING: GPIO controller not available\n");
+    }
+
+    neo_puts("\nNEO shell ready.  Type 'help' or '?' for commands.\n");
 
     for(;;) 
     {

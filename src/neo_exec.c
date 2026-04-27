@@ -17,7 +17,10 @@
 
 static const neo_exec_hal_t *s_hal = 0;
 
-void neo_exec_set_hal(const neo_exec_hal_t *hal) { s_hal = hal; }
+void neo_exec_set_hal(const neo_exec_hal_t *hal) 
+{ 
+    s_hal = hal; 
+}
 
 #ifndef NEO_EXEC_NO_NEORV32
 #  include <neorv32.h>
@@ -195,7 +198,7 @@ void neo_exec_run(const neo_txn_t *txn)
     for(i = 0; i < txn->count; ++i) 
     {
         const neo_cmd_t *cmd = &txn->cmds[i];
-        switch(cmd->kind) 
+        switch((uint16_t)cmd->kind) 
         {
         case NEO_CMD_TWI_WRITE:
             exec_write(txn, cmd);
