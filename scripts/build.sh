@@ -39,6 +39,7 @@ BUILD_TESTS=0
 TESTS_ONLY=0
 DO_INSTALL=0
 DO_CLEAN=1
+DO_CLEAN_SPECIFIED=0
 VERBOSE=0
 JOBS="$(nproc 2>/dev/null || echo 4)"
 TOOLCHAIN_PREFIX=""
@@ -66,7 +67,7 @@ while [[ $# -gt 0 ]]; do
         --toolchain)     TOOLCHAIN_PREFIX="${2:?--toolchain requires an argument}"; shift ;;
         --toolchain=*)   TOOLCHAIN_PREFIX="${1#*=}" ;;
         --install)       DO_INSTALL=1 ;;
-        --no-clean)      DO_CLEAN=0 ;;
+        --no-clean)      DO_CLEAN=0; DO_CLEAN_SPECIFIED=1;;
         --jobs|-j)       JOBS="${2:?--jobs requires an argument}"; shift ;;
         --jobs=*)        JOBS="${1#*=}" ;;
         --build-dir)     BUILD_BASE="${2:?--build-dir requires an argument}"; shift ;;
@@ -87,7 +88,7 @@ if [[ $DO_INSTALL -eq 1 ]]; then
     EXTRA_FLAGS=()
     [[ $BUILD_TESTS -eq 1 ]] && EXTRA_FLAGS+=("--tests")
     [[ $TESTS_ONLY  -eq 1 ]] && EXTRA_FLAGS+=("--tests-only")
-    [[ $DO_CLEAN    -eq 1 ]] && EXTRA_FLAGS+=("--clean")
+    [[ $DO_CLEAN_SPECIFIED    -eq 1 ]] && EXTRA_FLAGS+=("--clean")
     [[ $VERBOSE     -eq 1 ]] && EXTRA_FLAGS+=("--verbose")
     [[ -n "${TOOLCHAIN_PREFIX}" ]] && EXTRA_FLAGS+=("--toolchain")
     if [[ ${#EXTRA_FLAGS[@]} -gt 0 ]]; then
@@ -100,11 +101,32 @@ if [[ $DO_INSTALL -eq 1 ]]; then
     fi
     sudo apt-get update
     sudo apt-get install -y \
+        autoconf \
+        automake \
+        autotools-dev \
+        bc \
+        bison \
         build-essential \
         cmake \
+        curl \
+        gawk \
+        git \
+        gperf \
+        flex \
+        libexpat-dev \
+        libglib2.0-dev \
+        libgmp-dev \
+        libmpc-dev \
+        libmpfr-dev \
+        libslirp-dev \
+        libtool \
         ninja-build \
+        patchutils \
         pkg-config \
-        git
+        python3 \
+        python3-pip \
+        texinfo \
+        zlib1g-dev
     log "Host dependencies installed.  Re-run the script without --install to build."
     exit 0
 fi
