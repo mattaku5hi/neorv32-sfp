@@ -42,19 +42,19 @@ static void neo_init_banner(void)
         neorv32_cpu_csr_set(CSR_MIE, 1 << CSR_MIE_MTIE);
     }
 
-    neo_printf("NEORV32 ROM size: %u bytes\n", neo_rom_size_get());
-    neo_printf("NEORV32 RAM size: %u bytes\n", neo_ram_size_get());
-    neo_printf("NEORV32 heap @ %p, %u bytes\n",
-               neorv32_heap_begin_c, neorv32_heap_size_c);
+    neo_printf("NEORV32 ROM size: %lu bytes\n", neo_rom_size_get());
+    neo_printf("NEORV32 RAM size: %lu bytes\n", neo_ram_size_get());
+    neo_printf("NEORV32 heap @ %p, %lu bytes\n",
+               (void *)neorv32_heap_begin_c, (unsigned long)neorv32_heap_size_c);
 
     uint32_t coreClock = neorv32_sysinfo_get_clk();
     if(coreClock != NEO_SYS_CLK) 
     {
-        neo_printf("WARNING: clock mismatch: hw=%u Hz sw=%u Hz\n",
+        neo_printf("WARNING: clock mismatch: hw=%lu Hz sw=%lu Hz\n",
                    coreClock, NEO_SYS_CLK);
     } 
     else 
     {
-        neo_printf("NEORV32 clock rate: %u Hz\n", coreClock);
+        neo_printf("NEORV32 clock rate: %lu Hz\n", coreClock);
     }
 }

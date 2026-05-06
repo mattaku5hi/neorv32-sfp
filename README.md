@@ -113,9 +113,17 @@ sudo scripts/build.sh --install
 ### 3.3 Тулчейн
 Для сборки проекта потребуется тулчейн GCC для архитектуры RISC-V с минимальным набором расширений.  
 Ниже приведена последовательность действий для загрузки и сборки данного тулчейна:  
+Клонирование:
 ```bash
 git clone https://github.com/riscv/riscv-gnu-toolchain
 cd riscv-gnu-toolchain
+```
+Создание каталога для тулчейна:
+```bash
+sudo mkdir -p /opt/riscv
+sudo chmod -R 0755 /opt/riscv/
+sudo chown -R 1000:1000 /opt/riscv/
+```
 ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
 make
 ```
