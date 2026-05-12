@@ -17,7 +17,7 @@
 #                        Rationale: any cmake/make work performed in the same run
 #                        would inherit root privileges and pollute the workspace
 #                        with root-owned build artefacts.
-#   --clean              Remove existing build directories before configuring
+#   --no-clean           Skip cleaning build directories before configuring
 #   --jobs <N> | -j <N>  Parallel build jobs (default: nproc)
 #   --build-dir <dir>    Override base build directory (default: ./build)
 #   --verbose            Verbose build output
@@ -88,7 +88,7 @@ if [[ $DO_INSTALL -eq 1 ]]; then
     EXTRA_FLAGS=()
     [[ $BUILD_TESTS -eq 1 ]] && EXTRA_FLAGS+=("--tests")
     [[ $TESTS_ONLY  -eq 1 ]] && EXTRA_FLAGS+=("--tests-only")
-    [[ $DO_CLEAN_SPECIFIED    -eq 1 ]] && EXTRA_FLAGS+=("--clean")
+    [[ $DO_CLEAN_SPECIFIED    -eq 1 ]] && EXTRA_FLAGS+=("--no-clean")
     [[ $VERBOSE     -eq 1 ]] && EXTRA_FLAGS+=("--verbose")
     [[ -n "${TOOLCHAIN_PREFIX}" ]] && EXTRA_FLAGS+=("--toolchain")
     if [[ ${#EXTRA_FLAGS[@]} -gt 0 ]]; then
