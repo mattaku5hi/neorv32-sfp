@@ -1,4 +1,7 @@
-## Project Documentation
+## Documentation
+
+[![GitHub Pages](https://img.shields.io/website.svg?label=stnolting.github.io%2Fneorv32&longCache=true&style=flat-square&url=http%3A%2F%2Fstnolting.github.io%2Fneorv32%2Findex.html&logo=GitHub)](https://stnolting.github.io/neorv32)
+[![Documentation](https://img.shields.io/github/actions/workflow/status/stnolting/neorv32/Documentation.yml?branch=main&longCache=true&style=flat-square&label=Documentation&logo=Github%20Actions&logoColor=fff)](https://github.com/stnolting/neorv32/actions/workflows/Documentation.yml)
 
 ### > [`datasheet`](datasheet)
 
@@ -7,16 +10,16 @@ available at [https://stnolting.github.io/neorv32](https://stnolting.github.io/n
 
 ### > [`figures`](figures)
 
-Figures and images used by the data sheet, user guide and the webpage(s). The according
+Images used by the data sheet, user guide and the GitHub pages. The according
 license(s) are listed in `license.md`.
 
 ### > [`references`](references)
 
-Reference material like RISC-V and Wishbone specifications.
+Reference material like RISC-V and Wishbone specifications. The most recent ratified version
+of the RISC-V ISA specs can be found online:
 
-### > [`sources`](sources)
-
-Various sources for the images in `figures/`.
+* [Volume I: Unprivileged Architecture](https://docs.riscv.org/reference/isa/unpriv/unpriv-index.html)
+* [Volume II: Privileged Architecture](https://docs.riscv.org/reference/isa/priv/priv-index.html)
 
 ### > [`userguide`](userguide)
 

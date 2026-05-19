@@ -160,7 +160,6 @@ set(C_SOURCES_NEO_SIGILLUM_COMMON
     "${NEORV32_SRC}/neorv32_spi.c"
     "${NEORV32_SRC}/neorv32_twi.c"
     "${NEORV32_SRC}/neorv32_uart.c"
-    "${NEORV32_SRC}/neorv32_xip.c"
 
     "${CURDIR}/src/utils_common.c"
     "${CURDIR}/src/spi_flash.c"

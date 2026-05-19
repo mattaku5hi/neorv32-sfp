@@ -1,15 +1,10 @@
 .SUFFIXES:
 .DEFAULT_GOAL := help
 
-RISCV_PREFIX ?= /opt/riscv/bin/riscv32-unknown-elf-
-
-TOPTARGETS := exe clean_all check info all
+TOPTARGETS := elf exe clean clean_all check info all
 
 SUBDIRS := $(wildcard */.)
-# ignore dummy folders (starting with '~')
 EXCLDIR := $(wildcard ~*/.)
-# ignore some of the default projects/examples
-EXCLDIR += eclipse/. dhrystone/. performance_tests/. float_corner_test/.
 SUBDIRS := $(filter-out $(EXCLDIR), $(SUBDIRS))
 
 $(TOPTARGETS): $(SUBDIRS)
@@ -25,6 +20,5 @@ help:
 	@echo " help      - show this text"
 	@echo " check     - check toolchain"
 	@echo " info      - show makefile configuration"
-	@echo " exe       - create executables from all projects"
-	@echo " all       - create executables and boot images from all projects"
+	@echo " all       - create everything from all projects"
 	@echo " clean_all - clean up everything"

@@ -38,7 +38,7 @@ static inline void neo_spi_flash_wait_wip()
 static void neo_spi_flash_wakeup(void)
 {
     neorv32_spi_cs_en(SPI_FLASH_CS);
-    neorv32_spi_trans(SPI_FLASH_CMD_WAKE);
+    neorv32_spi_transfer(SPI_FLASH_CMD_WAKE);
     neorv32_spi_cs_dis();
 }
 
@@ -48,7 +48,7 @@ static void neo_spi_flash_wakeup(void)
 static void neo_spi_flash_write_enable(void)
 {
     neorv32_spi_cs_en(SPI_FLASH_CS);
-    neorv32_spi_trans(SPI_FLASH_CMD_WRITE_ENABLE);
+    neorv32_spi_transfer(SPI_FLASH_CMD_WRITE_ENABLE);
     neorv32_spi_cs_dis();
 }
 
@@ -58,7 +58,7 @@ static void neo_spi_flash_write_enable(void)
 static void neo_spi_flash_write_disable(void)
 {
     neorv32_spi_cs_en(SPI_FLASH_CS);
-    neorv32_spi_trans(SPI_FLASH_CMD_WRITE_DISABLE);
+    neorv32_spi_transfer(SPI_FLASH_CMD_WRITE_DISABLE);
     neorv32_spi_cs_dis();
 }
 
@@ -71,8 +71,8 @@ static uint8_t neo_spi_flash_read_status(void)
 {
     neorv32_spi_cs_en(SPI_FLASH_CS);
 
-    neorv32_spi_trans(SPI_FLASH_CMD_READ_STATUS);
-    uint8_t res = neorv32_spi_trans(0);
+    neorv32_spi_transfer(SPI_FLASH_CMD_READ_STATUS);
+    uint8_t res = neorv32_spi_transfer(0);
 
     neorv32_spi_cs_dis();
 
@@ -96,17 +96,17 @@ static void neo_spi_flash_write_addr(uint32_t addr)
     address.uint32 = addr;
 
 #if defined(SPI_FLASH_ADDR_BYTES) &&  SPI_FLASH_ADDR_BYTES == 2
-    neorv32_spi_trans(address.uint8[1]);
-    neorv32_spi_trans(address.uint8[0]);
+    neorv32_spi_transfer(address.uint8[1]);
+    neorv32_spi_transfer(address.uint8[0]);
 #elif defined(SPI_FLASH_ADDR_BYTES) &&  SPI_FLASH_ADDR_BYTES == 3
-    neorv32_spi_trans(address.uint8[2]);
-    neorv32_spi_trans(address.uint8[1]);
-    neorv32_spi_trans(address.uint8[0]);
+    neorv32_spi_transfer(address.uint8[2]);
+    neorv32_spi_transfer(address.uint8[1]);
+    neorv32_spi_transfer(address.uint8[0]);
 #elif defined(SPI_FLASH_ADDR_BYTES) &&  SPI_FLASH_ADDR_BYTES == 4
-    neorv32_spi_trans(address.uint8[3]);
-    neorv32_spi_trans(address.uint8[2]);
-    neorv32_spi_trans(address.uint8[1]);
-    neorv32_spi_trans(address.uint8[0]);
+    neorv32_spi_transfer(address.uint8[3]);
+    neorv32_spi_transfer(address.uint8[2]);
+    neorv32_spi_transfer(address.uint8[1]);
+    neorv32_spi_transfer(address.uint8[0]);
 #else
     #error "Unsupported SPI_FLASH_ADDR_BYTES configuration!"
 #endif
@@ -153,9 +153,9 @@ uint8_t neo_spi_flash_read_byte(uint32_t addr)
 {
     neorv32_spi_cs_en(SPI_FLASH_CS);    
 
-    neorv32_spi_trans(SPI_FLASH_CMD_READ);
+    neorv32_spi_transfer(SPI_FLASH_CMD_READ);
     neo_spi_flash_write_addr(addr);
-    uint8_t rdata = neorv32_spi_trans(0);
+    uint8_t rdata = neorv32_spi_transfer(0);
 
     neorv32_spi_cs_dis();
 
@@ -171,12 +171,12 @@ void neo_spi_flash_read_page(uint32_t addr, size_t length, uint8_t* const pData)
 
     neorv32_spi_cs_en(SPI_FLASH_CS);
 
-    neorv32_spi_trans(SPI_FLASH_CMD_READ);
+    neorv32_spi_transfer(SPI_FLASH_CMD_READ);
     neo_spi_flash_write_addr(addr);
 
     for(size_t i = 0; i < length; i++)
     {
-        pData[i] = neorv32_spi_trans(0);
+        pData[i] = neorv32_spi_transfer(0);
     }
 
     neorv32_spi_cs_dis();
@@ -196,9 +196,9 @@ void neo_spi_flash_write_byte(uint32_t addr, uint8_t wdata)
 
     neorv32_spi_cs_en(SPI_FLASH_CS);
 
-    neorv32_spi_trans(SPI_FLASH_CMD_PAGE_PROGRAM);
+    neorv32_spi_transfer(SPI_FLASH_CMD_PAGE_PROGRAM);
     neo_spi_flash_write_addr(addr);
-    neorv32_spi_trans(wdata);
+    neorv32_spi_transfer(wdata);
 
     neorv32_spi_cs_dis();
     neo_spi_flash_wait_wip();
@@ -219,11 +219,11 @@ void neo_spi_flash_write_word(uint32_t addr, uint32_t wdata)
 
     neorv32_spi_cs_en(SPI_FLASH_CS);
 
-    neorv32_spi_trans(SPI_FLASH_CMD_PAGE_PROGRAM);
+    neorv32_spi_transfer(SPI_FLASH_CMD_PAGE_PROGRAM);
     neo_spi_flash_write_addr(addr);
     for(uint32_t i = 0; i < 4; i++)
     {
-        neorv32_spi_trans(data.uint8[i]);
+        neorv32_spi_transfer(data.uint8[i]);
     }
     neorv32_spi_cs_dis();
     neo_spi_flash_wait_wip();
@@ -247,12 +247,12 @@ void neo_spi_flash_write_page(uint32_t addr, size_t length, uint8_t* const pData
 
     neorv32_spi_cs_en(SPI_FLASH_CS);
 
-    neorv32_spi_trans(SPI_FLASH_CMD_PAGE_PROGRAM);
+    neorv32_spi_transfer(SPI_FLASH_CMD_PAGE_PROGRAM);
     neo_spi_flash_write_addr(addr);
 
     for(uint32_t i = 0; i < length; i++)
     {
-        neorv32_spi_trans(pData[i]);
+        neorv32_spi_transfer(pData[i]);
     }
 
     neorv32_spi_cs_dis();
@@ -304,7 +304,7 @@ void neo_spi_flash_erase_sector(uint32_t addr)
 
     neorv32_spi_cs_en(SPI_FLASH_CS);
 
-    neorv32_spi_trans(SPI_FLASH_CMD_ERASE_SECTOR);
+    neorv32_spi_transfer(SPI_FLASH_CMD_ERASE_SECTOR);
     neo_spi_flash_write_addr(addr);
 
     neorv32_spi_cs_dis();

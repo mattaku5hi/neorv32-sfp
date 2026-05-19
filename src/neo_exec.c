@@ -35,7 +35,7 @@ static void hal_neo_stop (void)
 }
 static int  hal_neo_trans(uint8_t *b, int a)
 { 
-    return neorv32_twi_trans(b, a); 
+    return neorv32_twi_transfer(b, a); 
 }
 static void hal_neo_gpio_w(uint8_t v)     
 { 

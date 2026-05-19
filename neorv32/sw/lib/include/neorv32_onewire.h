@@ -1,7 +1,7 @@
 // ================================================================================ //
 // The NEORV32 RISC-V Processor - https://github.com/stnolting/neorv32              //
 // Copyright (c) NEORV32 contributors.                                              //
-// Copyright (c) 2020 - 2024 Stephan Nolting. All rights reserved.                  //
+// Copyright (c) 2020 - 2026 Stephan Nolting. All rights reserved.                  //
 // Licensed under the BSD-3-Clause license, see LICENSE for details.                //
 // SPDX-License-Identifier: BSD-3-Clause                                            //
 // ================================================================================ //
@@ -9,17 +9,13 @@
 /**
  * @file neorv32_onewire.h
  * @brief 1-Wire Interface Controller (ONEWIRE) HW driver header file.
- *
- * @note These functions should only be used if the ONEWIRE unit was synthesized (IO_ONEWIRE_EN = true).
- *
- * @see https://stnolting.github.io/neorv32/sw/files.html
  */
 
-#ifndef neorv32_onewire_h
-#define neorv32_onewire_h
+#ifndef NEORV32_ONEWIRE_H
+#define NEORV32_ONEWIRE_H
 
+#include <neorv32.h>
 #include <stdint.h>
-
 
 /**********************************************************************//**
  * @name IO Device: 1-Wire Interface Controller (ONEWIRE)
@@ -31,7 +27,7 @@ typedef volatile struct __attribute__((packed,aligned(4))) {
   uint32_t DCMD; /**< offset 4: command and data register (#NEORV32_ONEWIRE_DCMD_enum) */
 } neorv32_onewire_t;
 
-/** ONEWIRE module hardware access (#neorv32_onewire_t) */
+/** ONEWIRE module hardware handle (#neorv32_onewire_t) */
 #define NEORV32_ONEWIRE ((neorv32_onewire_t*) (NEORV32_ONEWIRE_BASE))
 
 /** ONEWIRE control register bits */
@@ -85,7 +81,6 @@ void    neorv32_onewire_enable(void);
 void    neorv32_onewire_disable(void);
 void    neorv32_onewire_flush(void);
 int     neorv32_onewire_sense(void);
-
 int     neorv32_onewire_busy(void);
 void    neorv32_onewire_reset(void);
 int     neorv32_onewire_reset_get_presence(void);
@@ -95,7 +90,6 @@ void    neorv32_onewire_write_bit(uint8_t bit);
 void    neorv32_onewire_read_byte(void);
 uint8_t neorv32_onewire_read_byte_get(void);
 void    neorv32_onewire_write_byte(uint8_t byte);
-
 int     neorv32_onewire_reset_blocking(void);
 uint8_t neorv32_onewire_read_bit_blocking(void);
 void    neorv32_onewire_write_bit_blocking(uint8_t bit);
@@ -104,4 +98,4 @@ void    neorv32_onewire_write_byte_blocking(uint8_t byte);
 /**@}*/
 
 
-#endif // neorv32_onewire_h
+#endif // NEORV32_ONEWIRE_H

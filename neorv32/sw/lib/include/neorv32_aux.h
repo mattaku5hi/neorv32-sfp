@@ -1,7 +1,7 @@
 // ================================================================================ //
 // The NEORV32 RISC-V Processor - https://github.com/stnolting/neorv32              //
 // Copyright (c) NEORV32 contributors.                                              //
-// Copyright (c) 2020 - 2025 Stephan Nolting. All rights reserved.                  //
+// Copyright (c) 2020 - 2026 Stephan Nolting. All rights reserved.                  //
 // Licensed under the BSD-3-Clause license, see LICENSE for details.                //
 // SPDX-License-Identifier: BSD-3-Clause                                            //
 // ================================================================================ //
@@ -11,20 +11,11 @@
  * @brief General auxiliary functions header file.
  */
 
-#ifndef neorv32_aux_h
-#define neorv32_aux_h
+#ifndef NEORV32_AUX_H
+#define NEORV32_AUX_H
 
+#include <neorv32.h>
 #include <stdint.h>
-
-
-/**********************************************************************//**
- * @name Select minimum/maximum
- **************************************************************************/
-/**@{*/
-#define neorv32_aux_min(a, b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a < _b ? _a : _b; })
-#define neorv32_aux_max(a, b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a > _b ? _a : _b; })
-/**@}*/
-
 
 /**********************************************************************//**
  * @name Date and time struct
@@ -44,6 +35,7 @@ typedef struct {
  * @name AUX prototypes
  **************************************************************************/
 /**@{*/
+void     neorv32_aux_delay_ms(uint32_t clock_hz, uint32_t time_ms);
 uint64_t neorv32_aux_date2unixtime(date_t* date);
 void     neorv32_aux_unixtime2date(uint64_t unixtime, date_t* date);
 uint64_t neorv32_aux_hexstr2uint64(char *buffer, unsigned int length);
@@ -57,4 +49,4 @@ void     neorv32_aux_print_license(void);
 /**@}*/
 
 
-#endif // neorv32_aux_h
+#endif // NEORV32_AUX_H

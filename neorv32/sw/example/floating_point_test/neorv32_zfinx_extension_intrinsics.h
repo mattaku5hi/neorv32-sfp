@@ -1,69 +1,33 @@
-// #################################################################################################
-// # << NEORV32 - Intrinsics + Emulation Functions for the RISC-V "Zfinx" CPU extension >>         #
-// # ********************************************************************************************* #
-// # The intrinsics provided by this library allow to use the hardware floating-point unit of the  #
-// # RISC-V Zfinx CPU extension without the need for Zfinx support by the compiler / toolchain.    #
-// # ********************************************************************************************* #
-// # BSD 3-Clause License                                                                          #
-// #                                                                                               #
-// # Copyright (c) 2024, Stephan Nolting. All rights reserved.                                     #
-// #                                                                                               #
-// # Redistribution and use in source and binary forms, with or without modification, are          #
-// # permitted provided that the following conditions are met:                                     #
-// #                                                                                               #
-// # 1. Redistributions of source code must retain the above copyright notice, this list of        #
-// #    conditions and the following disclaimer.                                                   #
-// #                                                                                               #
-// # 2. Redistributions in binary form must reproduce the above copyright notice, this list of     #
-// #    conditions and the following disclaimer in the documentation and/or other materials        #
-// #    provided with the distribution.                                                            #
-// #                                                                                               #
-// # 3. Neither the name of the copyright holder nor the names of its contributors may be used to  #
-// #    endorse or promote products derived from this software without specific prior written      #
-// #    permission.                                                                                #
-// #                                                                                               #
-// # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS   #
-// # OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF               #
-// # MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE    #
-// # COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,     #
-// # EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE #
-// # GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED    #
-// # AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING     #
-// # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED  #
-// # OF THE POSSIBILITY OF SUCH DAMAGE.                                                            #
-// # ********************************************************************************************* #
-// # The NEORV32 Processor - https://github.com/stnolting/neorv32              (c) Stephan Nolting #
-// #################################################################################################
+// ================================================================================ //
+// The NEORV32 RISC-V Processor - https://github.com/stnolting/neorv32              //
+// Copyright (c) NEORV32 contributors.                                              //
+// Copyright (c) 2020 - 2026 Stephan Nolting. All rights reserved.                  //
+// Licensed under the BSD-3-Clause license, see LICENSE for details.                //
+// SPDX-License-Identifier: BSD-3-Clause                                            //
+// ================================================================================ //
 
 
 /**********************************************************************//**
  * @file floating_point_test/neorv32_zfinx_extension_intrinsics.h
  * @author Stephan Nolting
  *
- * @brief "Intrinsic" library for the NEORV32 single-precision floating-point in x registers (Zfinx) extension
- * @brief Also provides emulation functions for all intrinsics (functionality re-built in pure software). The functionality of the emulation
- * @brief functions is based on the RISC-V floating-point spec.
+ * @brief "Intrinsic" library for the NEORV32 single-precision floating-point
+ * in x registers (Zfinx) extension. Also provides emulation functions for all
+ * intrinsics (functionality re-built in pure software). The functionality of the
+ * emulation functions is based on the RISC-V floating-point spec.
  *
- * @note All operations from this library use the default GCC "round to nearest, ties to even" rounding mode.
- *
- * @warning This library is just a temporary fall-back until the Zfinx extensions are supported by the upstream RISC-V GCC port.
+ * @note All operations from this library use the default GCC "round to nearest,
+ * ties to even" rounding mode.
  **************************************************************************/
- 
-#ifndef neorv32_zfinx_extension_intrinsics_h
-#define neorv32_zfinx_extension_intrinsics_h
+
+
+#ifndef NEORV32_ZFINX_EXTENSION_INTRINSICS_H
+#define NEORV32_ZFINX_EXTENSION_INTRINSICS_H
 
 #define __USE_GNU
 #define _GNU_SOURCE
 #include <float.h>
 #include <math.h>
-
-
-/**********************************************************************//**
- * Sanity check
- **************************************************************************/
-#if defined __riscv_f || (__riscv_flen == 32)
-  #error Application programs using the Zfinx intrinsic library have to be compiled WITHOUT the <F> MARCH ISA attribute!
-#endif
 
 
 /**********************************************************************//**
@@ -74,6 +38,113 @@ typedef union
   uint32_t binary_value; /**< Access as native float */
   float    float_value;  /**< Access in binary representation */
 } float_conv_t;
+
+/**********************************************************************//**
+ * @name Register aliases (physical names and ABI names) [LEGACY!]
+ **************************************************************************/
+asm (
+  ".set reg_x0,   0 \n"
+  ".set reg_x1,   1 \n"
+  ".set reg_x2,   2 \n"
+  ".set reg_x3,   3 \n"
+  ".set reg_x4,   4 \n"
+  ".set reg_x5,   5 \n"
+  ".set reg_x6,   6 \n"
+  ".set reg_x7,   7 \n"
+  ".set reg_x8,   8 \n"
+  ".set reg_x9,   9 \n"
+  ".set reg_x10, 10 \n"
+  ".set reg_x11, 11 \n"
+  ".set reg_x12, 12 \n"
+  ".set reg_x13, 13 \n"
+  ".set reg_x14, 14 \n"
+  ".set reg_x15, 15 \n"
+#ifndef __riscv_32e
+  ".set reg_x16, 16 \n"
+  ".set reg_x17, 17 \n"
+  ".set reg_x18, 18 \n"
+  ".set reg_x19, 19 \n"
+  ".set reg_x20, 20 \n"
+  ".set reg_x21, 21 \n"
+  ".set reg_x22, 22 \n"
+  ".set reg_x23, 23 \n"
+  ".set reg_x24, 24 \n"
+  ".set reg_x25, 25 \n"
+  ".set reg_x26, 26 \n"
+  ".set reg_x27, 27 \n"
+  ".set reg_x28, 28 \n"
+  ".set reg_x29, 29 \n"
+  ".set reg_x30, 30 \n"
+  ".set reg_x31, 31 \n"
+#endif
+  ".set reg_zero, 0 \n"
+  ".set reg_ra,   1 \n"
+  ".set reg_sp,   2 \n"
+  ".set reg_gp,   3 \n"
+  ".set reg_tp,   4 \n"
+  ".set reg_t0,   5 \n"
+  ".set reg_t1,   6 \n"
+  ".set reg_t2,   7 \n"
+  ".set reg_s0,   8 \n"
+  ".set reg_s1,   9 \n"
+  ".set reg_a0,  10 \n"
+  ".set reg_a1,  11 \n"
+  ".set reg_a2,  12 \n"
+  ".set reg_a3,  13 \n"
+  ".set reg_a4,  14 \n"
+  ".set reg_a5,  15 \n"
+#ifndef __riscv_32e
+  ".set reg_a6,  16 \n"
+  ".set reg_a7,  17 \n"
+  ".set reg_s2,  18 \n"
+  ".set reg_s3,  19 \n"
+  ".set reg_s4,  20 \n"
+  ".set reg_s5,  21 \n"
+  ".set reg_s6,  22 \n"
+  ".set reg_s7,  23 \n"
+  ".set reg_s8,  24 \n"
+  ".set reg_s9,  25 \n"
+  ".set reg_s10, 26 \n"
+  ".set reg_s11, 27 \n"
+  ".set reg_t3,  28 \n"
+  ".set reg_t4,  29 \n"
+  ".set reg_t5,  30 \n"
+  ".set reg_t6,  31 \n"
+#endif
+);
+
+/**********************************************************************//**
+ * @name R-type instruction format wrapper, RISC-V-standard
+ **************************************************************************/
+#define CUSTOM_INSTR_R_TYPE(funct7, rs2, rs1, funct3, opcode) \
+({                                                            \
+uint32_t __rd;                                                \
+asm volatile(".option push \n .option arch, +f");             \
+__rd = RISCV_INSTR_R_TYPE(opcode, funct3, funct7, rs1, rs2);  \
+asm volatile(".option pop \n");                               \
+__rd;                                                         \
+})
+
+
+/**********************************************************************//**
+ * @name R/I instruction format, RISC-V-standard
+ **************************************************************************/
+#define CUSTOM_INSTR_I_TYPE(imm12, rs1, funct3, opcode) \
+({                                                      \
+  uint32_t __return;                                    \
+  asm volatile (                                        \
+    ".word (                                            \
+      (((" #imm12  ") & 0xfff) << 20) |                 \
+      (((  reg_%1   ) &  0x1f) << 15) |                 \
+      (((" #funct3 ") &  0x07) << 12) |                 \
+      (((  reg_%0   ) &  0x1f) <<  7) |                 \
+      (((" #opcode ") &  0x7f) <<  0)                   \
+    );"                                                 \
+    : [rd] "=r" (__return)                              \
+    : "r" (rs1)                                         \
+  );                                                    \
+  __return;                                             \
+})
 
 
 // ################################################################################################
@@ -123,7 +194,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fadds(float rs1, fl
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0000000, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0000000, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -141,7 +212,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fsubs(float rs1, fl
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0000100, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0000100, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -159,7 +230,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fmuls(float rs1, fl
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0001000, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0001000, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -177,7 +248,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fmins(float rs1, fl
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0010100, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0010100, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -195,7 +266,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fmaxs(float rs1, fl
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0010100, opb.binary_value, opa.binary_value, 0b001, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0010100, opb.binary_value, opa.binary_value, 0b001, 0b1010011);
   return res.float_value;
 }
 
@@ -211,7 +282,7 @@ inline uint32_t __attribute__ ((always_inline)) riscv_intrinsic_fcvt_wus(float r
   float_conv_t opa;
   opa.float_value = rs1;
 
-  return CUSTOM_INSTR_R2_TYPE(0b1100000, 0b00001, opa.binary_value, 0b000, 0b1010011);
+  return CUSTOM_INSTR_I_TYPE(0b110000000001, opa.binary_value, 0b000, 0b1010011);
 }
 
 
@@ -226,7 +297,7 @@ inline int32_t __attribute__ ((always_inline)) riscv_intrinsic_fcvt_ws(float rs1
   float_conv_t opa;
   opa.float_value = rs1;
 
-  return (int32_t)CUSTOM_INSTR_R2_TYPE(0b1100000, 0b00000, opa.binary_value, 0b000, 0b1010011);
+  return (int32_t)CUSTOM_INSTR_I_TYPE(0b110000000000, opa.binary_value, 0b000, 0b1010011);
 }
 
 
@@ -240,7 +311,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fcvt_swu(uint32_t r
 
   float_conv_t res;
 
-  res.binary_value = CUSTOM_INSTR_R2_TYPE(0b1101000, 0b00001, rs1, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_I_TYPE(0b110100000001, rs1, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -255,7 +326,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fcvt_sw(int32_t rs1
 
   float_conv_t res;
 
-  res.binary_value = CUSTOM_INSTR_R2_TYPE(0b1101000, 0b00000, rs1, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_I_TYPE(0b110100000000, rs1, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -273,7 +344,7 @@ inline uint32_t __attribute__ ((always_inline)) riscv_intrinsic_feqs(float rs1, 
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  return CUSTOM_INSTR_R3_TYPE(0b1010000, opb.binary_value, opa.binary_value, 0b010, 0b1010011);
+  return CUSTOM_INSTR_R_TYPE(0b1010000, opb.binary_value, opa.binary_value, 0b010, 0b1010011);
 }
 
 
@@ -290,7 +361,7 @@ inline uint32_t __attribute__ ((always_inline)) riscv_intrinsic_flts(float rs1, 
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  return CUSTOM_INSTR_R3_TYPE(0b1010000, opb.binary_value, opa.binary_value, 0b001, 0b1010011);
+  return CUSTOM_INSTR_R_TYPE(0b1010000, opb.binary_value, opa.binary_value, 0b001, 0b1010011);
 }
 
 
@@ -307,7 +378,7 @@ inline uint32_t __attribute__ ((always_inline)) riscv_intrinsic_fles(float rs1, 
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  return CUSTOM_INSTR_R3_TYPE(0b1010000, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
+  return CUSTOM_INSTR_R_TYPE(0b1010000, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
 }
 
 
@@ -324,7 +395,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fsgnjs(float rs1, f
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0010000, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0010000, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -342,7 +413,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fsgnjns(float rs1, 
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0010000, opb.binary_value, opa.binary_value, 0b001, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0010000, opb.binary_value, opa.binary_value, 0b001, 0b1010011);
   return res.float_value;
 }
 
@@ -360,7 +431,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fsgnjxs(float rs1, 
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0010000, opb.binary_value, opa.binary_value, 0b010, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0010000, opb.binary_value, opa.binary_value, 0b010, 0b1010011);
   return res.float_value;
 }
 
@@ -376,7 +447,7 @@ inline uint32_t __attribute__ ((always_inline)) riscv_intrinsic_fclasss(float rs
   float_conv_t opa;
   opa.float_value = rs1;
 
-  return CUSTOM_INSTR_R2_TYPE(0b1110000, 0b00000, opa.binary_value, 0b001, 0b1010011);
+  return CUSTOM_INSTR_I_TYPE(0b111000000000, opa.binary_value, 0b001, 0b1010011);
 }
 
 
@@ -399,7 +470,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fdivs(float rs1, fl
   opa.float_value = rs1;
   opb.float_value = rs2;
 
-  res.binary_value = CUSTOM_INSTR_R3_TYPE(0b0001100, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_R_TYPE(0b0001100, opb.binary_value, opa.binary_value, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -417,7 +488,7 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fsqrts(float rs1) {
   float_conv_t opa, res;
   opa.float_value = rs1;
 
-  res.binary_value = CUSTOM_INSTR_R2_TYPE(0b0101100, 0b00000, opa.binary_value, 0b000, 0b1010011);
+  res.binary_value = CUSTOM_INSTR_I_TYPE(0b010110000000, opa.binary_value, 0b000, 0b1010011);
   return res.float_value;
 }
 
@@ -434,13 +505,13 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fsqrts(float rs1) {
  **************************************************************************/
 inline float __attribute__ ((always_inline)) riscv_intrinsic_fmadds(float rs1, float rs2, float rs3) {
 
-  float_conv_t opa, opb, opc, res;
-  opa.float_value = rs1;
-  opb.float_value = rs2;
-  opc.float_value = rs3;
+  (void)rs1;
+  (void)rs2;
+  (void)rs3;
 
-  res.binary_value = CUSTOM_INSTR_R4_TYPE(opc.binary_value, opb.binary_value, opa.binary_value, 0b000, 0b1000011);
-  return res.float_value;
+  asm volatile (".word 0x02000043");
+
+  return 0;
 }
 
 
@@ -456,13 +527,13 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fmadds(float rs1, f
  **************************************************************************/
 inline float __attribute__ ((always_inline)) riscv_intrinsic_fmsubs(float rs1, float rs2, float rs3) {
 
-  float_conv_t opa, opb, opc, res;
-  opa.float_value = rs1;
-  opb.float_value = rs2;
-  opc.float_value = rs3;
+  (void)rs1;
+  (void)rs2;
+  (void)rs3;
 
-  res.binary_value = CUSTOM_INSTR_R4_TYPE(opc.binary_value, opb.binary_value, opa.binary_value, 0b000, 0b1000111);
-  return res.float_value;
+  asm volatile (".word 0x02000047");
+
+  return 0;
 }
 
 
@@ -478,13 +549,13 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fmsubs(float rs1, f
  **************************************************************************/
 inline float __attribute__ ((always_inline)) riscv_intrinsic_fnmsubs(float rs1, float rs2, float rs3) {
 
-  float_conv_t opa, opb, opc, res;
-  opa.float_value = rs1;
-  opb.float_value = rs2;
-  opc.float_value = rs3;
+  (void)rs1;
+  (void)rs2;
+  (void)rs3;
 
-  res.binary_value = CUSTOM_INSTR_R4_TYPE(opc.binary_value, opb.binary_value, opa.binary_value, 0b000, 0b1001011);
-  return res.float_value;
+  asm volatile (".word 0x0200004b");
+
+  return 0;
 }
 
 
@@ -500,13 +571,13 @@ inline float __attribute__ ((always_inline)) riscv_intrinsic_fnmsubs(float rs1, 
  **************************************************************************/
 inline float __attribute__ ((always_inline)) riscv_intrinsic_fnmadds(float rs1, float rs2, float rs3) {
 
-  float_conv_t opa, opb, opc, res;
-  opa.float_value = rs1;
-  opb.float_value = rs2;
-  opc.float_value = rs3;
+  (void)rs1;
+  (void)rs2;
+  (void)rs3;
 
-  res.binary_value = CUSTOM_INSTR_R4_TYPE(opc.binary_value, opb.binary_value, opa.binary_value, 0b000, 0b1001111);
-  return res.float_value;
+  asm volatile (".word 0x0200004f");
+
+  return 0;
 }
 
 
@@ -1082,5 +1153,4 @@ float __attribute__ ((noinline)) riscv_emulate_fnmadds(float rs1, float rs2, flo
 }
 
 
-#endif // neorv32_zfinx_extension_intrinsics_h
- 
+#endif // NEORV32_ZFINX_EXTENSION_INTRINSICS_H

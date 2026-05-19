@@ -45,7 +45,7 @@ static void neo_init_banner(void)
     neo_printf("NEORV32 ROM size: %lu bytes\n", neo_rom_size_get());
     neo_printf("NEORV32 RAM size: %lu bytes\n", neo_ram_size_get());
     neo_printf("NEORV32 heap @ %p, %lu bytes\n",
-               (void *)neorv32_heap_begin_c, (unsigned long)neorv32_heap_size_c);
+               (void *)NEORV32_HEAP_BEGIN, (unsigned long)NEORV32_HEAP_SIZE);
 
     uint32_t coreClock = neorv32_sysinfo_get_clk();
     if(coreClock != NEO_SYS_CLK) 
