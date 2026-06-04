@@ -3,7 +3,7 @@ if(NOT DEFINED READELF OR NOT DEFINED ELF OR NOT DEFINED IMAGE_GEN OR NOT DEFINE
 endif()
 
 execute_process(
-  COMMAND ${READELF} -h ${ELF}
+  COMMAND ${CMAKE_COMMAND} -E env LC_ALL=C LANG=C ${READELF} -h ${ELF}
   OUTPUT_VARIABLE READELF_HEADER
   RESULT_VARIABLE READELF_RC
 )
@@ -12,12 +12,12 @@ if(NOT READELF_RC EQUAL 0)
   message(FATAL_ERROR "Failed to read ELF header: ${ELF}")
 endif()
 
-string(REGEX MATCH "Entry point address:[ \t]*([^\n\r]+)" ENTRY_LINE "${READELF_HEADER}")
+string(REGEX MATCH "Entry point address:[ \t]*0x[0-9A-Fa-f]+" ENTRY_LINE "${READELF_HEADER}")
 if(NOT ENTRY_LINE)
   message(FATAL_ERROR "Could not parse ELF entry point from readelf output")
 endif()
 
-string(REGEX REPLACE ".*Entry point address:[ \t]*" "" ENTRY_ADDR "${ENTRY_LINE}")
+string(REGEX REPLACE ".*(0x[0-9A-Fa-f]+).*" "\\1" ENTRY_ADDR "${ENTRY_LINE}")
 string(STRIP "${ENTRY_ADDR}" ENTRY_ADDR)
 
 execute_process(
