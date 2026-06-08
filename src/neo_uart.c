@@ -21,6 +21,10 @@ void neo_uart_init(uint32_t baudrate)
 int neo_uart_putc_be(int c, void *ctx)
 {
     (void)ctx;
+    if(c == '\n')
+    {
+        neorv32_uart0_putc('\r');
+    }
     neorv32_uart0_putc((char)c);
     return c;
 }
