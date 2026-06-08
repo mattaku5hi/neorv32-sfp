@@ -101,7 +101,6 @@ Thumbs.db
 *.zip
 
 # Core dumps
-core
 core.*
 
 # Coverage files
