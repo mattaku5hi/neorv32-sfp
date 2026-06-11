@@ -152,6 +152,21 @@ TEST(exec_read_hex_format)
     return 0;
 }
 
+TEST(exec_read_last_byte_nack_still_printed)
+{
+    host_io_begin();
+    mock_reset();
+    mk.rx_data[0] = 0x11; mk.rx_data[1] = 0x22; mk.rx_data_n = 2;
+    // ctrl, iaddr, data1 ACK; data2 NACK (typical final read beat)
+    mk.ack_pattern[3] = 1; mk.ack_n = 4;
+    neo_txn_t t;
+    memset(&t, 0, sizeof(t));
+    neo_parse_transaction("hA1_h00_h02h_", &t);
+    neo_exec_run(&t);
+    ASSERT_EQ_STR(host_io_output(), "A1+00+1122\n");
+    return 0;
+}
+
 TEST(exec_gpio_out_in)
 {
     host_io_begin();

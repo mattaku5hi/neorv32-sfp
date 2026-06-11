@@ -130,6 +130,7 @@ static void exec_write(const neo_txn_t *txn, const neo_cmd_t *cmd)
         uint8_t v = txn->payload_pool[cmd->payload_off + i];
         exec_twi_byte(v, 0);
     }
+    s_hal->twi_stop();
 }
 
 static void exec_read(const neo_cmd_t *cmd)
@@ -146,16 +147,18 @@ static void exec_read(const neo_cmd_t *cmd)
         uint8_t b = 0xFF;
         int last = (i + 1 == cmd->rd_len);
         int ack = s_hal->twi_trans(&b, last ? 0 : 1);
-        if(ack != 0) 
+        if(!last && (ack != 0)) 
         {
-            // Slave failed to drive ACK on this byte: emit '-'.
+            // For intermediate bytes, NACK means read phase failed.
             neo_putc('-');
         }
         else 
         {
+            // Last byte is valid even when host intentionally sends NACK.
             print_byte_in_fmt(b, cmd->rd_fmt);
         }
     }
+    s_hal->twi_stop();
 }
 
 // -------------------------------------------------------------------------
@@ -193,46 +196,41 @@ void neo_exec_run(const neo_txn_t *txn)
 #endif
     }
 
-    int issued_twi = 0;
     int i;
     for(i = 0; i < txn->count; ++i) 
     {
+        uint8_t newLineNeeded = 1;
         const neo_cmd_t *cmd = &txn->cmds[i];
         switch((uint16_t)cmd->kind) 
         {
         case NEO_CMD_TWI_WRITE:
             exec_write(txn, cmd);
-            issued_twi = 1;
-            neo_putc('\n');
             break;
         case NEO_CMD_TWI_READ:
             exec_read(cmd);
-            issued_twi = 1;
-            neo_putc('\n');
             break;
         case NEO_CMD_GPIO_OUT:
             s_hal->gpio_write_byte(cmd->gpio_byte);
             neo_puts("gpio <= ");
             print_bin_byte(cmd->gpio_byte);
-            neo_putc('\n');
             break;
         case NEO_CMD_GPIO_IN: 
         {
             uint8_t v = s_hal->gpio_read_byte();
             neo_puts("gpio => ");
             print_bin_byte(v);
-            neo_putc('\n');
             break;
         }
         case NEO_CMD_HELP:
             neo_exec_print_help();
+            newLineNeeded = 0;
             break;
         default:
             break;
         }
-    }
-    if(issued_twi) 
-    {
-        s_hal->twi_stop();
+        if(newLineNeeded) 
+        {
+            neo_putc('\n');
+        }
     }
 }
