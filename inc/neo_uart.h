@@ -26,8 +26,9 @@ int  neo_uart_getc_be(void* ctx);
 void neo_uart_install_io(void);
 
 // Read one transaction line into 'buf' (capacity 'max', incl. NUL).
-// Echoes characters as the user types.  Honors backspace.  Stops on '\r' or
-// '\n'.  Returns the number of bytes stored (excluding NUL).
+// UART backend intentionally does not echo each received character to avoid
+// RX overruns on bursty/pasted input. Honors backspace. Stops on '\r' or
+// '\n'. Returns the number of bytes stored (excluding NUL).
 //
 // If the line would exceed 'max - 1', extra bytes are dropped silently
 // (the caller may detect this by reading exactly max-1 bytes).

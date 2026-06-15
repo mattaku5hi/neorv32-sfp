@@ -156,6 +156,7 @@ static void exec_read(const neo_cmd_t *cmd)
         {
             // Last byte is valid even when host intentionally sends NACK.
             print_byte_in_fmt(b, cmd->rd_fmt);
+            neo_putc('-');
         }
     }
     s_hal->twi_stop();

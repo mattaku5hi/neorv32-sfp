@@ -147,8 +147,8 @@ TEST(exec_read_hex_format)
     memset(&t, 0, sizeof(t));
     neo_parse_transaction("hA1_h00_h02h_", &t);
     neo_exec_run(&t);
-    // ctrl/iaddr echoed as hex with '+', then two RX bytes (no +)
-    ASSERT_EQ_STR(host_io_output(), "A1+00+1122\n");
+    // ctrl/iaddr echoed as hex with '+', then two RX bytes with '-' separators
+    ASSERT_EQ_STR(host_io_output(), "A1+00+11-22-\n");
     return 0;
 }
 
@@ -163,7 +163,7 @@ TEST(exec_read_last_byte_nack_still_printed)
     memset(&t, 0, sizeof(t));
     neo_parse_transaction("hA1_h00_h02h_", &t);
     neo_exec_run(&t);
-    ASSERT_EQ_STR(host_io_output(), "A1+00+1122\n");
+    ASSERT_EQ_STR(host_io_output(), "A1+00+11-22-\n");
     return 0;
 }
 
