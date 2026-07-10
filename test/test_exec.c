@@ -152,6 +152,24 @@ TEST(exec_read_hex_format)
     return 0;
 }
 
+TEST(exec_read_header_ack_markers)
+{
+    host_io_begin();
+    mock_reset();
+    mk.rx_data[0] = 0xFF; mk.rx_data_n = 1;
+    // ctrl ACK, iaddr NACK, payload beat ACK (single-byte read prints data).
+    mk.ack_pattern[0] = 0;
+    mk.ack_pattern[1] = 1;
+    mk.ack_pattern[2] = 0;
+    mk.ack_n = 3;
+    neo_txn_t t;
+    memset(&t, 0, sizeof(t));
+    neo_parse_transaction("hA1_h50_h1h_", &t);
+    neo_exec_run(&t);
+    ASSERT_EQ_STR(host_io_output(), "A1+50-FF-\n");
+    return 0;
+}
+
 TEST(exec_read_last_byte_nack_still_printed)
 {
     host_io_begin();

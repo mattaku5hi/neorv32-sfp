@@ -47,6 +47,6 @@ int neo_uart_read_line(char *buf, size_t max)
     neo_uart_install_io();
     // Keep UART RX path one-way while receiving a line: per-char echo can
     // cause deterministic RX overruns on bursty host input.
-    return neo_read_line(buf, max, 0);
+    return neo_read_line(buf, max, 1);
 }
 
